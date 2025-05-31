@@ -1,18 +1,19 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import "../index.css";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const genres = [
     "fiction",
     "non-fiction",
-    "science",
-    "history",
     "fantasy",
     "mystery",
-    "biography",
     "romance",
     "classics",
+    "biography",
+    "history",
+    "science",
     "self-help",
   ];
 
@@ -36,16 +37,52 @@ const Categories = () => {
                 ),
               ]);
 
+            const googlebooks = (googlebooksresp.data.items || []).map(
+              (book) => ({
+                source: "Google Books",
+                id: book.id,
+                title: book.volumeInfo?.title,
+                author: book.volumeInfo?.authors?.[0] || "Unknown Author",
+                image: book.volumeInfo?.imageLinks?.smallThumbnail || null,
+              })
+            );
+
+            const openlibrary = (openlibres.data.works || []).map((book) => ({
+              source: "Open Library",
+              id: book.key,
+              title: book.title,
+              author: book.authors?.[0]?.name || "Unknown Author",
+              image: book.cover_i
+                ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+                : null,
+            }));
+
+            const projectgut = (projectgutres.data.results || []).map(
+              (book) => ({
+                source: "Project Gutenberg",
+                id: book.id,
+                title: book.title,
+                author: book.authors?.[0]?.name || "Unknown Author",
+                image: book.formats["image/jpeg"] || null,
+              })
+            );
+
+            const combinedBooks = [
+              ...googlebooks,
+              ...openlibrary,
+              ...projectgut,
+            ]
+              .filter((book) => book.title && book.author && book.image)
+              .slice(0, 5); // Take only first 5 books total
+
             return {
               genre,
-              googlebooks: googlebooksresp.data.items || [],
-              openlibrary: openlibres.data.works || [],
-              projectgut: projectgutres.data.results || [],
+              books: combinedBooks,
             };
           })
         );
+
         setCategories(results);
-        console.log(results); // Array of { genre, googlebooks, openlibrary, projectgut }
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -59,52 +96,18 @@ const Categories = () => {
       <h2>Categories</h2>
       {categories.map((category) => (
         <div key={category.genre} className="genre-section">
-          <h3>{category.genre}</h3>
+          <h3>{category.genre.toUpperCase()}</h3>
           <div className="books">
-            {/* Google Books */}
-            {category.googlebooks.map((book, idx) => (
-              <div className="book" key={book.id || idx}>
-                <img
-                  src={book.volumeInfo?.imageLinks?.smallThumbnail}
-                  alt={book.volumeInfo?.title}
-                />
-                <h4>{book.volumeInfo?.title}</h4>
-                <p className="author">
-                  {book.volumeInfo?.authors?.[0] || "Unknown Author"}
-                </p>
-              </div>
-            ))}
-
-            {/* Open Library */}
-            {category.openlibrary.map((book, idx) => (
-              <div className="book" key={book.key || idx}>
-                {book.cover_i ? (
-                  <img
-                    src={`https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`}
-                    alt={book.title}
-                  />
+            {category.books.map((book) => (
+              <div className="book" key={book.id}>
+                {book.image ? (
+                  <img src={book.image} alt={book.title} />
                 ) : (
                   <div className="no-image">No cover</div>
                 )}
                 <h4>{book.title}</h4>
-                <p className="author">
-                  {book.authors?.[0]?.name || "Unknown Author"}
-                </p>
-              </div>
-            ))}
-
-            {/* Project Gutenberg */}
-            {category.projectgut.map((book, idx) => (
-              <div className="book" key={book.id || idx}>
-                {book.formats["image/jpeg"] ? (
-                  <img src={book.formats["image/jpeg"]} alt={book.title} />
-                ) : (
-                  <div className="no-image">No cover</div>
-                )}
-                <h4>{book.title}</h4>
-                <p className="author">
-                  {book.authors?.[0]?.name || "Unknown Author"}
-                </p>
+                <p className="author">{book.author}</p>
+                <p className="source">{book.source}</p>
               </div>
             ))}
           </div>

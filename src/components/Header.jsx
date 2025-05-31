@@ -1,4 +1,5 @@
 import React from "react";
+import "../index.css";
 
 const Header = () => {
   return (
@@ -24,7 +25,7 @@ const Header = () => {
       </nav>
 
       <h1>Welcome to BookDownloader App</h1>
-      <p>The perfect, comfy and resourceful burrow for bookworms like us!</p>
+      <p>The perfect, comfy and resourceful burrow for us, bookworms!</p>
     </div>
   );
 };
