@@ -58,19 +58,24 @@ const Categories = () => {
     <div className="category-container">
       <h2>Categories</h2>
       {categories.map((category) => (
-        <ul>
-          <li key={category.genre}>
-            <h3>{category.genre}</h3>
+        <div key={category.genre} className="genre-section">
+          <h3>{category.genre}</h3>
+          <div className="books">
+            {/* Google Books */}
             {category.googlebooks.map((book, idx) => (
               <div className="book" key={book.id || idx}>
                 <img
                   src={book.volumeInfo?.imageLinks?.smallThumbnail}
-                  alt="book-cover"
+                  alt={book.volumeInfo?.title}
                 />
-                <h4>{book.volumeInfo.title}</h4>
-                <p className="author">{book.volumeInfo?.authors[0]}</p>
+                <h4>{book.volumeInfo?.title}</h4>
+                <p className="author">
+                  {book.volumeInfo?.authors?.[0] || "Unknown Author"}
+                </p>
               </div>
             ))}
+
+            {/* Open Library */}
             {category.openlibrary.map((book, idx) => (
               <div className="book" key={book.key || idx}>
                 {book.cover_i ? (
@@ -83,10 +88,12 @@ const Categories = () => {
                 )}
                 <h4>{book.title}</h4>
                 <p className="author">
-                  {book.authors ? book.authors[0].name : "Unknown Author"}
+                  {book.authors?.[0]?.name || "Unknown Author"}
                 </p>
               </div>
             ))}
+
+            {/* Project Gutenberg */}
             {category.projectgut.map((book, idx) => (
               <div className="book" key={book.id || idx}>
                 {book.formats["image/jpeg"] ? (
@@ -94,11 +101,14 @@ const Categories = () => {
                 ) : (
                   <div className="no-image">No cover</div>
                 )}
-                <p>{book.title}</p>
+                <h4>{book.title}</h4>
+                <p className="author">
+                  {book.authors?.[0]?.name || "Unknown Author"}
+                </p>
               </div>
             ))}
-          </li>
-        </ul>
+          </div>
+        </div>
       ))}
     </div>
   );
