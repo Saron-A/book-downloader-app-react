@@ -83,6 +83,7 @@ const Categories = () => {
         );
 
         setCategories(results);
+        console.log(results);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
