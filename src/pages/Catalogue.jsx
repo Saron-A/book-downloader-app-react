@@ -28,6 +28,8 @@ const Catalogue = () => {
           openlib: openlibRes.data.works || [],
           projectgut: gutendexRes.data.results || [],
         }));
+
+        console.log({ books });
       } catch (error) {
         console.error("Error fetching books:", error);
       }
