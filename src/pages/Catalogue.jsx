@@ -38,6 +38,10 @@ const Catalogue = () => {
     fetchBooks();
   }, []);
 
+  useEffect(() => {
+    console.log("Fetched books:", books);
+  }, [books]);
+
   return (
     <div>
       <h1>Catalogue</h1>
