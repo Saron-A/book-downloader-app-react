@@ -51,7 +51,6 @@ const Catalogue = () => {
       <label htmlFor="genre-select">Genre</label>
       <select name="" id="genre-select" value={genre} onChange={handleClick}>
         <option value="fiction">fiction</option>
-        <option value="non-fiction">Non-fiction</option>
         <option value="fantasy">Fantasy</option>
         <option value="mystery">Mystery</option>
         <option value="romance">Romance</option>
@@ -60,6 +59,9 @@ const Catalogue = () => {
         <option value="history">History</option>
         <option value="science">Science</option>
         <option value="self-help">Self-help</option>
+        <option value="horror">Horror</option>
+        <option value="children">Children</option>
+        <option value="poetry">Poetry</option>
       </select>
       <div className="book-shelf">
         {books.projectgut.map((book) => (

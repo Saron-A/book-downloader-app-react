@@ -4,9 +4,9 @@ import "../index.css";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
+
   const genres = [
     "fiction",
-    "non-fiction",
     "fantasy",
     "mystery",
     "romance",
@@ -14,7 +14,10 @@ const Categories = () => {
     "biography",
     "history",
     "science",
-    "self-help",
+    "self_help",
+    "horror",
+    "children",
+    "poetry",
   ];
 
   useEffect(() => {
@@ -22,50 +25,50 @@ const Categories = () => {
       try {
         const results = await Promise.all(
           genres.map(async (genre) => {
-            const [openlibres, projectgutres] = await Promise.all([
+            const [openlibRes, projectgutRes] = await Promise.all([
               axios.get(
-                `https://openlibrary.org/subjects/${genre}.json?limit=5`
+                `https://openlibrary.org/subjects/${genre}.json?limit=10`
               ),
-              axios.get(
-                `https://gutendex.com/books/?bookshelves=${encodeURIComponent(
-                  genre
-                )}`
-              ),
+              axios.get(`https://gutendex.com/books/?bookshelves=${genre}`),
             ]);
 
-            const openlibrary = (openlibres.data.works || []).map((book) => ({
-              source: "Open Library",
-              id: book.key,
-              title: book.title,
-              author: book.authors?.[0]?.name || "Unknown Author",
-              image: book.cover_i
-                ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                : null,
-            }));
+            const openlibrary = (openlibRes.data.works || [])
+              .filter(
+                (book) => book.title && book.authors?.length && book.cover_id
+              )
+              .slice(0, 3) // first 3 Open Library books
+              .map((book) => ({
+                source: "Open Library",
+                id: book.key,
+                title: book.title,
+                author: book.authors[0].name,
+                image: `https://covers.openlibrary.org/b/id/${book.cover_id}-M.jpg`,
+              }));
 
-            const projectgut = (projectgutres.data.results || []).map(
-              (book) => ({
+            const projectgut = (projectgutRes.data.results || [])
+              .filter(
+                (book) =>
+                  book.title &&
+                  book.authors?.length &&
+                  book.formats["image/jpeg"]
+              )
+              .slice(0, 2) // first 2 Gutenberg books
+              .map((book) => ({
                 source: "Project Gutenberg",
                 id: book.id,
                 title: book.title,
-                author: book.authors?.[0]?.name || "Unknown Author",
-                image: book.formats["image/jpeg"] || null,
-              })
-            );
-
-            const combinedBooks = [...openlibrary, ...projectgut]
-              .filter((book) => book.title && book.author && book.image)
-              .slice(0, 5); // Take only first 5 books total
+                author: book.authors[0].name,
+                image: book.formats["image/jpeg"],
+              }));
 
             return {
               genre,
-              books: combinedBooks,
+              books: [...openlibrary, ...projectgut],
             };
           })
         );
 
         setCategories(results);
-        console.log(results);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -79,7 +82,7 @@ const Categories = () => {
       <h2>Categories</h2>
       {categories.map((category) => (
         <div key={category.genre} className="genre-section">
-          <h3>{category.genre.toUpperCase()}</h3>
+          <h3>{category.genre.replace(/_/g, " ")}</h3>
           <div className="books">
             {category.books.map((book) => (
               <div className="book" key={book.id}>
