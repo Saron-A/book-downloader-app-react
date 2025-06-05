@@ -22,30 +22,16 @@ const Categories = () => {
       try {
         const results = await Promise.all(
           genres.map(async (genre) => {
-            const [googlebooksresp, openlibres, projectgutres] =
-              await Promise.all([
-                axios.get(
-                  `https://www.googleapis.com/books/v1/volumes?q=subject:${genre}&maxResults=5`
-                ),
-                axios.get(
-                  `https://openlibrary.org/subjects/${genre}.json?limit=5`
-                ),
-                axios.get(
-                  `https://gutendex.com/books/?bookshelves=${encodeURIComponent(
-                    genre
-                  )}`
-                ),
-              ]);
-
-            const googlebooks = (googlebooksresp.data.items || []).map(
-              (book) => ({
-                source: "Google Books",
-                id: book.id,
-                title: book.volumeInfo?.title,
-                author: book.volumeInfo?.authors?.[0] || "Unknown Author",
-                image: book.volumeInfo?.imageLinks?.smallThumbnail || null,
-              })
-            );
+            const [openlibres, projectgutres] = await Promise.all([
+              axios.get(
+                `https://openlibrary.org/subjects/${genre}.json?limit=5`
+              ),
+              axios.get(
+                `https://gutendex.com/books/?bookshelves=${encodeURIComponent(
+                  genre
+                )}`
+              ),
+            ]);
 
             const openlibrary = (openlibres.data.works || []).map((book) => ({
               source: "Open Library",
@@ -67,11 +53,7 @@ const Categories = () => {
               })
             );
 
-            const combinedBooks = [
-              ...googlebooks,
-              ...openlibrary,
-              ...projectgut,
-            ]
+            const combinedBooks = [...openlibrary, ...projectgut]
               .filter((book) => book.title && book.author && book.image)
               .slice(0, 5); // Take only first 5 books total
 
