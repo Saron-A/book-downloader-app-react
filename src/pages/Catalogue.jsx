@@ -50,7 +50,9 @@ const Catalogue = () => {
       <h1>Downloadable Books</h1>
       <label htmlFor="genre-select">Genre</label>
       <select name="" id="genre-select" value={genre} onChange={handleClick}>
-        <option value="fiction">fiction</option>
+        <option value="fiction" default>
+          fiction
+        </option>
         <option value="fantasy">Fantasy</option>
         <option value="mystery">Mystery</option>
         <option value="romance">Romance</option>
