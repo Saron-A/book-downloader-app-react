@@ -25,7 +25,7 @@ const Header = () => {
       </nav>
 
       <h1>Welcome to BookDownloader App</h1>
-      <p>The perfect, comfy and resourceful burrow for us, bookworms!</p>
+      <p>The perfect, comfy and resourceful burrow for bookworms!</p>
     </div>
   );
 };
